@@ -36,7 +36,7 @@ const Home = () => {
       {!isLoading && (
         <div>
           <div>
-            <Navbar />
+            {/* <Navbar /> */}
           </div>
           <div className="mt-2">
             <CarouselCom />

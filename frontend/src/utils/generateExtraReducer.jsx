@@ -14,7 +14,9 @@ export default function generateExtraReducers(thunk, name) {
         state[name] = action.payload;
         switch (name) {
           case "getAllUsers":
-            toast.success("user fetched Succesfully");
+            break;
+          case "uploadImg":
+            toast.success("images uploaded sucessfully");
             break;
           default:
             break;

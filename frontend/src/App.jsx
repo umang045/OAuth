@@ -1,4 +1,4 @@
-import React, { Children, lazy, Suspense, useEffect, useState } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import {
   SignedIn,
   SignedOut,
@@ -18,9 +18,19 @@ import {
   Navigate,
 } from "react-router-dom";
 import Home from "./home";
+import Product from "./pages/product/Product";
+import Navbar from "./components/navbar/Navbar";
+import AddProd from "./pages/product/AddProd/AddProd";
 
 //import admin component with lazy
 const AdminHome = lazy(() => import("./components/admin/adminHome/AdminHome"));
+
+const Layout = () => (
+  <>
+    <Navbar />
+    <Outlet />
+  </>
+);
 
 const App = () => {
   const { user } = useUser();
@@ -42,7 +52,7 @@ const App = () => {
 
   //declare protected Route
   const ProtectedRoute = ({ children }) => {
-    isSignedIn ? <Navigate to="/sign-in" /> : "";
+    if (!isSignedIn) return <Navigate to="/sign-in" />;
     if (role !== "admin") return <Navigate to="/" />;
     return children;
   };
@@ -50,13 +60,22 @@ const App = () => {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Home />,
-    },
-    {
-      path: "/admin",
+      element: <Layout />,
       children: [
         {
           path: "",
+          element: <Home />,
+        },
+        {
+          path: "product",
+          element: <Product />,
+        },
+        {
+          path: "add-product",
+          element: <AddProd />,
+        },
+        {
+          path: "admin",
           element: (
             <ProtectedRoute>
               <Suspense fallback={<div>Loading...</div>}>
@@ -72,16 +91,11 @@ const App = () => {
       element: <SignIn />,
     },
     {
-      path: "*/*",
-      element: <Home />,
+      path: "*",
+      element: <Navigate to="/" />,
     },
   ]);
-
-  return (
-    <>
-      <RouterProvider router={router} />
-    </>
-  );
+  return <RouterProvider router={router} />;
 };
 
 export default App;

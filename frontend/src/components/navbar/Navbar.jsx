@@ -2,6 +2,7 @@ import { UserButton } from "@clerk/clerk-react";
 import React, { useEffect } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   useEffect(() => {}, []);
@@ -29,18 +30,21 @@ const Navbar = () => {
             UI
           </a>
           <div className="space-x-10 options md:flex">
-            <a href="" className="text-gray-200 hover:text-white">
+            <Link to="/" className="text-gray-200 hover:text-white">
               Home
-            </a>
-            <a href="" className="text-gray-300 hover:text-white">
+            </Link>
+            <Link to="/product" className="text-gray-300 hover:text-white">
               Products
-            </a>
-            <a href="" className="text-gray-300 hover:text-white">
+            </Link>
+            <Link to="/add-product" className="text-gray-300 hover:text-white">
+             Add Products
+            </Link>
+            <Link to="/" className="text-gray-300 hover:text-white">
               Orders
-            </a>
-            <a href="" className="text-gray-300 hover:text-white">
+            </Link>
+            <Link to="/" className="text-gray-300 hover:text-white">
               Contact Us
-            </a>
+            </Link>
           </div>
           <div>
             <UserButton />

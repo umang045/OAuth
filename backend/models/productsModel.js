@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
-const Category = require("./categoryModel");
+// const Category = require("./categoryModel");
 
 const Product = sequelize.define(
   "Product",
@@ -26,13 +26,6 @@ const Product = sequelize.define(
       allowNull: false,
       unique: true,
     },
-    categoryId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: Category,
-        key: "id",
-      },
-    },
     images: {
       type: DataTypes.JSON,
       allowNull: true,
@@ -41,8 +34,8 @@ const Product = sequelize.define(
       type: DataTypes.JSON,
       allowNull: true,
     },
-    tags: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
+    tag: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
     isActive: {
