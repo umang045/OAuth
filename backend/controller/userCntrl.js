@@ -1,66 +1,73 @@
-const User = require("../model/userModel");
+const { generateToken } = require("../config/jwtToken");
+const { User, Role } = require("../models");
+const {
+  deleteOne,
+  addOne,
+  updateOne,
+  getOne,
+  getAll,
+} = require("../service/crudService");
 
 //register User
-const regUser = async (req, res) => {
-  try {
-    const user = await User.create(req.body);
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
+const regUser = addOne(User);
 
 //delete User
-const delUser = async (req, res) => {
-  try {
-    const user = await User.findByPk(req.params.id);
-    if (user) {
-      await user.destroy();
-      return res.status(200).json({ message: "User Deleted Sucesfully" });
-    }
-    return res.status(404).json({ message: "user not found" });
-    // res.status(200).json({ message: "user Deleted Succesfully" });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
+const delUser = deleteOne(User);
 
 //update User
-const updateUser = async (req, res) => {
-  try {
-    const user = await User.findByPk(req.params.id);
-    if (user) {
-      const updateUser = await User.update(req.body, {
-        where: {
-          id: req.params.id,
-        },
-      });
-      return res.status(200).json(updateUser);
-    }
-    return res.status(404).json({ message: "user not found" });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
+const updateUser = updateOne(User);
 
 //get Single User
-const getSingleUser = async (req, res) => {
-  try {
-    const user = await User.findByPk(req.params.id);
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
+const getSingleUser = getOne(User);
 
 //get All User
-const getAllUsers = async (req, res) => {
+const getAllUsers = getAll(User);
+
+//get user by role
+const getUserWithRole = async (req, res) => {
   try {
-    const users = await User.findAll();
-    res.status(200).json(users);
+    const users = await User.findAll({
+      include: {
+        model: Role,
+        attributes: ["roleName"],
+      },
+    });
+    return res.status(200).json(users);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    throw new Error(error);
   }
 };
 
-module.exports = { regUser, delUser, updateUser, getSingleUser, getAllUsers };
+//login user
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const isValidPassword = await user.comparePassword(password);
+    if (!isValidPassword) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+    const token = generateToken(user.id);
+    return res.status(200).json({ token });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+module.exports = {
+  regUser,
+  delUser,
+  updateUser,
+  getSingleUser,
+  getAllUsers,
+  getUserWithRole,
+  loginUser,
+};
